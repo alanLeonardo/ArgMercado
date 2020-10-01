@@ -1,18 +1,22 @@
 package org.example.ArgMercado.modelo;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;;
+
 import javax.persistence.*;
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
+
 
 @Entity
-public class ImagenProducto implements Serializable {
+public class ImagenProducto  {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idImagen;
 
+    @NotBlank
     private String nombre;
 
+    @NotBlank
     private String tipo;
 
     @Column(length = 400000)
@@ -25,18 +29,18 @@ public class ImagenProducto implements Serializable {
     public ImagenProducto() {
     }
 
-    public ImagenProducto(int idImagen, String name, String tipo, byte[]  foto, Producto owner) {
-        this.idImagen = idImagen;
+    public ImagenProducto(@NotBlank String name,@NotBlank String tipo, byte[]  foto) {
         this.nombre = name;
         this.tipo = tipo;
         this.foto = foto;
-        this.owner = owner;
     }
-    public ImagenProducto(int idImagen, String name, String tipo, byte[]  foto) {
-        this.idImagen = idImagen;
-        this.nombre = name;
-        this.tipo = tipo;
-        this.foto = foto;
+
+    public Producto getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Producto owner) {
+        this.owner = owner;
     }
 
     public int getIdImagen() {
@@ -46,6 +50,7 @@ public class ImagenProducto implements Serializable {
     public void setIdImagen(int idImagen) {
         this.idImagen = idImagen;
     }
+
 
     public String getNombre() {
         return nombre;
@@ -71,11 +76,4 @@ public class ImagenProducto implements Serializable {
         this.foto = foto;
     }
 
-    public Producto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(Producto owner) {
-        this.owner = owner;
-    }
 }

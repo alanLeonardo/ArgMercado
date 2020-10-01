@@ -1,10 +1,9 @@
 package org.example.ArgMercado.servicio;
 
 import org.example.ArgMercado.dao.IProductoDAO;
+import org.example.ArgMercado.modelo.Categoria;
 import org.example.ArgMercado.modelo.Producto;
-import org.hibernate.criterion.Example;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +41,25 @@ public class ProductoService implements IProductoService {
 
         return this.productoDAO.findAll(s);
     }
+
+    @Override
+    public List<Producto> recuperarProductosDeMayorAMenor() {
+        Sort s = Sort.by(Sort.Direction.DESC,"precio");
+
+        return this.productoDAO.findAll(s);
+    }
+
+    @Override
+    public void borrarProducto(Producto producto) {
+       this.productoDAO.delete(producto);
+    }
+
+    @Override
+    public boolean contains(Producto producto) {
+        return this.productoDAO.findAll().contains(producto);
+    }
+
+
 
 
 }

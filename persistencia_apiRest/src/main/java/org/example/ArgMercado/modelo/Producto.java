@@ -1,26 +1,28 @@
 package org.example.ArgMercado.modelo;
 
-import org.example.ArgMercado.enums.Categoria;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Producto implements Serializable,Comparable<Producto> {
+public class Producto implements Comparable<Producto> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idProducto;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
+    @OneToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @PrimaryKeyJoinColumn
     private Categoria categoria;
 
     @OneToMany(mappedBy="owner", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<ImagenProducto> imagenes = new ArrayList<ImagenProducto>();
 
     @NotBlank
@@ -34,21 +36,20 @@ public class Producto implements Serializable,Comparable<Producto> {
 
     private int stock = 0;
 
+    @ManyToOne
+    @JsonBackReference
+    private Usuario owner;
+
+
+    public Producto(@NotBlank String titulo) {
+       this.titulo = titulo;
+    }
+
     public Producto() {
 
     }
 
-    public Producto(int idProducto, @NotNull Categoria categoria, @NotBlank String titulo, @NotBlank String descripcion, @Min(1) Double precio, int stock) {
-        this.idProducto = idProducto;
-        this.categoria = categoria;
-        this.titulo = titulo;
-        this.descripcion = descripcion;
-        this.precio = precio;
-        this.stock = stock;
-    }
-
-    public Producto(int idProducto, @NotNull Categoria categoria, List<ImagenProducto> imagenes, @NotBlank String titulo, @NotBlank String descripcion, @Min(1) Double precio, int stock) {
-        this.idProducto = idProducto;
+    public Producto(@NotNull Categoria categoria, List<ImagenProducto> imagenes, @NotBlank String titulo, @NotBlank String descripcion, @Min(1) Double precio, int stock) {
         this.categoria = categoria;
         this.imagenes = imagenes;
         this.titulo = titulo;
@@ -58,27 +59,31 @@ public class Producto implements Serializable,Comparable<Producto> {
     }
 
     public int getIdProducto() {
-        return idProducto;
+        return this.idProducto;
     }
 
     public Categoria getCategoria() {
-        return categoria;
+        return this.categoria;
     }
 
     public String getTitulo() {
-        return titulo;
+        return this.titulo;
     }
 
     public String getDescripcion() {
-        return descripcion;
+        return this.descripcion;
     }
 
     public Double getPrecio() {
-        return precio;
+        return this.precio;
     }
 
     public int getStock() {
-        return stock;
+        return this.stock;
+    }
+
+    public Usuario getOwner() {
+        return this.owner;
     }
 
     public void setIdProducto(int idProducto) {
@@ -114,7 +119,11 @@ public class Producto implements Serializable,Comparable<Producto> {
     }
 
     public List<ImagenProducto> getImagenes() {
-        return imagenes;
+        return this.imagenes;
+    }
+
+    public void setOwner(Usuario owner) {
+        this.owner = owner;
     }
 
     @Override
@@ -122,5 +131,9 @@ public class Producto implements Serializable,Comparable<Producto> {
         if((this.getPrecio() > producto.getPrecio())) {
             return 1;
         } else { return 0;}
+    }
+
+    public void disminuirStock() {
+        this.stock = stock - 1;
     }
 }

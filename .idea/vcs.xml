@@ -3,5 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/React" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/persistencia_apiRest" vcs="Git" />
   </component>
 </project>

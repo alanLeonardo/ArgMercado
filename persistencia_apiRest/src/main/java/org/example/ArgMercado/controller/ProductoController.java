@@ -1,24 +1,19 @@
 package org.example.ArgMercado.controller;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.ArgMercado.modelo.Categoria;
 import org.example.ArgMercado.modelo.ImagenProducto;
-import org.example.ArgMercado.modelo.ImagenWapper;
 import org.example.ArgMercado.modelo.Producto;
-import org.example.ArgMercado.servicio.IImagenProductoService;
-import org.example.ArgMercado.servicio.ProductoService;
-import org.hibernate.engine.jdbc.BlobImplementer;
+import org.example.ArgMercado.modelo.Usuario;
+import org.example.ArgMercado.servicio.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import javax.sql.rowset.serial.SerialBlob;
-import javax.sql.rowset.serial.SerialException;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Blob;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -32,10 +27,17 @@ import java.util.zip.Inflater;
 public class ProductoController {
 
     @Autowired(required = true)
-    private ProductoService productoService;
+    private IProductoService productoService;
 
     @Autowired(required = true)
     private IImagenProductoService imagenProductoService;
+
+    @Autowired(required = true)
+    private IUsuarioService usuarioService;
+
+    @Autowired(required = true)
+    private ICategoriaService categoriaService;
+
 
     private List<ImagenProducto> imagenes = new ArrayList<>();
 
@@ -64,9 +66,8 @@ public class ProductoController {
         List<ImagenProducto> imagenProductos = getImagenProductos(this.imagenProductoService.recuperarTodo());
 
         return this.imagenProductoService.recuperarTodo();
-       // return imagenProductos;
-    }
 
+    }
 
     @DeleteMapping("/eliminarImagenes")
     public void borrarTodasLasImagenProducto() {
@@ -77,9 +78,9 @@ public class ProductoController {
     public void guardarFiles(@RequestParam("files") MultipartFile[] files ) {
 
         try {
+            imagenes = new ArrayList<>();
 
             for (int i = 0; i < files.length; i++) {
-                System.out.println("Original Image Byte Size - " + files[i].getBytes().length);
 
                 this.imagen = new ImagenProducto();
 
@@ -91,7 +92,9 @@ public class ProductoController {
 
                 this.imagenes.add(this.imagen);
 
-                System.out.println("Comprimida Image Byte Size - " + imagen.getFoto().length);
+                //System.out.println("Comprimida Image Byte Size - " + imagen.getFoto().length);
+                System.out.println("Imagen " + imagen.getIdImagen());
+                System.out.println("TipoDeImagen " + imagen.getTipo());
             }
 
         } catch(IOException e) {
@@ -107,36 +110,32 @@ public class ProductoController {
     @PostMapping("/publicarProducto")
     public void guardar(@Valid @RequestBody Producto producto) {
 
-        for(ImagenProducto imagen : this.imagenes) {
-            imagen.setOwner(producto);
-        }
+          this.productoService.guardar(producto);
+          Producto p = this.productoService.recuperar(producto.getIdProducto());
 
-        producto.setImagenes(this.imagenes);
+          System.out.println("Imagenes " + this.imagenes.size());
+          for (ImagenProducto imagen : this.imagenes) {
+              imagen.setOwner(p);
+              this.imagenProductoService.guardar(imagen);
+          }
 
-        this.productoService.guardar(producto);
+          producto.setImagenes(this.imagenes);
+
+          this.productoService.guardar(producto);
     }
 
     /*Este método se hará cuando por una petición GET (como indica la anotación) se llame a la url
      http://localhost:8080/api/publicarProducto/8080/api/producto*/
     @GetMapping("/producto/{idProducto}")
     public Producto recuperar(@PathVariable int idProducto) {
-         Producto producto = productoService.recuperar(idProducto);
+
+        Producto producto = productoService.recuperar(idProducto);
         List<ImagenProducto> imagenesProductos = getImagenProductos(producto.getImagenes());
         producto.setImagenes(imagenesProductos);
+
         return producto;
     }
 
-    private List<ImagenProducto> getImagenProductos(List<ImagenProducto> imagenes) {
-        List<ImagenProducto> imagenesProductos = new ArrayList<>();
-
-        for (ImagenProducto imagen : imagenes) {
-            System.out.println("Comprimida Image Byte Size - " + imagen.getFoto().length);
-            imagen.setFoto(this.decompressBytes(imagen.getFoto()));
-            imagenesProductos.add(imagen);
-            System.out.println("Original Image Byte Size - " + imagen.getFoto().length);
-        }
-        return imagenesProductos;
-    }
 
     @GetMapping("/productos")
     public List<Producto> recuperarTodo() {
@@ -154,15 +153,94 @@ public class ProductoController {
 
     @GetMapping("/productosOrdenadosDeMenorAMayor")
     public List<Producto> recuperarProductosDeMenorAMayor() {
-        return this.productoService.recuperarProductosDeMenorAMayor();
+        List ps = new ArrayList<>();
+        for(Producto producto : this.productoService.recuperarProductosDeMenorAMayor()) {
+            producto.setImagenes(getImagenProductos(producto.getImagenes()));
+            ps.add(producto);
+        }
+
+        return ps;
     }
 
+    @GetMapping("/productosOrdenadosDeMayorAMenor")
+    public List<Producto> recuperarProductosDeMayorAMenor() {
+        List ps = new ArrayList<>();
+        for(Producto producto : this.productoService.recuperarProductosDeMayorAMenor()) {
+            producto.setImagenes(getImagenProductos(producto.getImagenes()));
+            ps.add(producto);
+        }
+
+        return ps;
+    }
 
     @DeleteMapping("/sacarPublicacionesDeProductos")
     public void borrarTodo() {
         this.productoService.borrarTodo();
     }
 
+    private List<ImagenProducto> getImagenProductos(List<ImagenProducto> imagenes) {
+        List<ImagenProducto> imagenesProductos = new ArrayList<>();
+
+        for (ImagenProducto imagen : imagenes) {
+            imagen.setFoto(this.decompressBytes(imagen.getFoto()));
+            imagenesProductos.add(imagen);
+        }
+        return imagenesProductos;
+    }
+
+    @PutMapping("/comprarProducto")
+    public void comprarProducto(Producto producto) {
+
+      //  Usuario usuarioComprador = producto.getOwner();
+        //this.usuarioService.guardar(usuarioComprador);
+        this.productoService.guardar(producto);
+
+    }
+
+    @PostMapping("/registrarUsuario")
+    public void registrarUsuario(@Valid @RequestBody Usuario usuario) {
+
+        this.usuarioService.guardar(usuario);
+    }
+
+    @GetMapping("/iniciarSeccion/{email}/{contraseña}")
+    public Boolean iniciarSeccion(@PathVariable String email,@PathVariable String contraseña) {
+
+        return this.usuarioService.login(email,contraseña);
+    }
+
+    @GetMapping("/usuario/{idUsuario}")
+    public Usuario usuario(@PathVariable int idUsuario) {
+        return this.usuarioService.recuperar(idUsuario);
+    }
+
+    @GetMapping("/usuarios")
+    public List<Usuario> usuarios() {
+        return this.usuarioService.recuperarTodo();
+    }
+
+
+    @GetMapping("/categorias")
+    public List<Categoria> categorias() {
+        return this.categoriaService.recuperarTodo();
+    }
+
+    @DeleteMapping("/eliminarCategorias")
+    public void borrarTodasLasCategorias() {
+        this.categoriaService.borrarTodo();
+    }
+
+    //Mesaje provisorio hasta terminar la app
+    @PostMapping("/generarCategorias")
+    public void generarCategorias(){
+        this.categoriaService.guardar(new Categoria("Celulares"));
+        this.categoriaService.guardar(new Categoria("Electrodomesticos"));
+        this.categoriaService.guardar(new Categoria("Ropa"));
+        this.categoriaService.guardar(new Categoria("Electrónica"));
+        this.categoriaService.guardar(new Categoria("DeportesYFitness"));
+        this.categoriaService.guardar(new Categoria("Muñeco"));
+        this.categoriaService.guardar(new Categoria("Cuadros"));
+    }
 
     // compress the image bytes before storing it in the database
     public static byte[] compressBytes(byte[] data) {
