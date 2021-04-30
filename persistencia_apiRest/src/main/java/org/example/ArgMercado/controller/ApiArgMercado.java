@@ -24,7 +24,7 @@ import java.util.zip.Inflater;
 @CrossOrigin(origins = "*",allowedHeaders = "*",exposedHeaders = "content-type=multipart/*")
 @RestController
 @RequestMapping("/api") //esta sera la raiz de la url, es decir http://127.0.0.1:8080/api/
-public class ProductoController {
+public class ApiArgMercado {
 
     @Autowired(required = true)
     private IProductoService productoService;
@@ -119,9 +119,11 @@ public class ProductoController {
               this.imagenProductoService.guardar(imagen);
           }
 
-          producto.setImagenes(this.imagenes);
+          p.setImagenes(this.imagenes);
+          p.setCategoria(producto.getCategoria());
+          p.getCategoria().setOwner(p);
 
-          this.productoService.guardar(producto);
+          this.productoService.guardar(p);
     }
 
     /*Este método se hará cuando por una petición GET (como indica la anotación) se llame a la url
@@ -178,6 +180,7 @@ public class ProductoController {
         this.productoService.borrarTodo();
     }
 
+
     private List<ImagenProducto> getImagenProductos(List<ImagenProducto> imagenes) {
         List<ImagenProducto> imagenesProductos = new ArrayList<>();
 
@@ -230,7 +233,7 @@ public class ProductoController {
         this.categoriaService.borrarTodo();
     }
 
-    //Mesaje provisorio hasta terminar la app
+
     @PostMapping("/generarCategorias")
     public void generarCategorias(){
         this.categoriaService.guardar(new Categoria("Celulares"));

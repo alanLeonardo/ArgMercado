@@ -1,9 +1,8 @@
 package org.example.ArgMercado.modelo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -15,6 +14,10 @@ public class Categoria {
 
     @NotBlank
     private String name;
+
+    @OneToOne
+    @JsonBackReference
+    private Producto owner;
 
     public Categoria() {
 
@@ -39,4 +42,13 @@ public class Categoria {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Producto getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Producto owner) {
+        this.owner = owner;
+    }
+
 }

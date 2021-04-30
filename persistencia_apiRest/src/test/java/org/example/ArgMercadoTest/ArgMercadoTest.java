@@ -90,9 +90,10 @@ public class ArgMercadoTest extends StepDefinitions {
          this.productoService.borrarTodo();
          this.imagenProductoService.borrarTodo();
          this.usuarioService.borrarTodo();
+         this.categoriaService.borrarTodo();
      }
 
-     //test para chequear que esta correctamente configurado el cucumber
+     //este test es para chequear que esta correctamente configurado el cucumber
 
     @Given("I have {int} cukes in my belly")
     public void I_have_cukes_in_my_belly(int cukes) {
@@ -331,8 +332,8 @@ public class ArgMercadoTest extends StepDefinitions {
         Producto newProducto = new Producto();
         ImagenProducto imagen1 = new ImagenProducto();
         ImagenProducto imagen2 = new ImagenProducto();
-        this.pathImagen1 = "/home/alan/Descargas/samsung-galaxy-j5-prime3.jpg";
-        this.pathImagen2 = "/home/alan/Descargas/j5-prime.jpg";
+        this.pathImagen1 = "/home/alan/Descargas/SamsungJ5.jpg";
+        this.pathImagen2 = "/home/alan/Descargas/Samsung-Galaxy-J5-Prime-354.jpg";
         this.file1 = new File(pathImagen1);
         this.file2 = new File(pathImagen2);
 
@@ -373,8 +374,8 @@ public class ArgMercadoTest extends StepDefinitions {
         Producto newProducto = new Producto();
         ImagenProducto imagen1 = new ImagenProducto();
         ImagenProducto imagen2 = new ImagenProducto();
-        this.pathImagen1 = "/home/alan/Descargas/samsung-galaxy-j5-prime3.jpg";
-        this.pathImagen2 = "/home/alan/Descargas/j5-prime.jpg";
+        this.pathImagen1 = "/home/alan/Descargas/SamsungJ5.jpg";
+        this.pathImagen2 = "/home/alan/Descargas/Samsung-Galaxy-J5-Prime-354.jpg";
         this.file1 = new File(pathImagen1);
         this.file2 = new File(pathImagen2);
 
@@ -411,8 +412,8 @@ public class ArgMercadoTest extends StepDefinitions {
         Producto newProducto = new Producto();
         ImagenProducto imagen1 = new ImagenProducto();
         ImagenProducto imagen2 = new ImagenProducto();
-        this.pathImagen1 = "/home/alan/Descargas/muneco-marvel-hombre-arana-29cm-original-hasbro-mundo-manias-D_NQ_NP_664104-MLA41750588273_052020-F.webp";
-        this.pathImagen2 = "/home/alan/Descargas/muneco-marvel-hombre-arana-29cm-original-hasbro-mundo-manias-D_NQ_NP_915094-MLA42129025419_062020-F.webp";
+        this.pathImagen1 = "/home/alan/Descargas/shoppingMuñecoSpiderman.webp";
+        this.pathImagen2 = "/home/alan/Descargas/shoppingMuñecoSpiderman2.webp";
         this.file1 = new File(pathImagen1);
         this.file2 = new File(pathImagen2);
 
@@ -449,8 +450,8 @@ public class ArgMercadoTest extends StepDefinitions {
         Producto newProducto = new Producto();
         ImagenProducto imagen1 = new ImagenProducto();
         ImagenProducto imagen2 = new ImagenProducto();
-        this.pathImagen1 = "/home/alan/Descargas/banda-elastica-enfundada-resistencia-media-slatix-gym-D_NQ_NP_918040-MLA41694319535_052020-F.webp";
-        this.pathImagen2 = "/home/alan/Descargas/banda-elastica-enfundada-resistencia-media-slatix-gym-D_NQ_NP_692223-MLA41694374298_052020-F.webp";
+        this.pathImagen1 = "/home/alan/Descargas/bandaElastica.webp";
+        this.pathImagen2 = "/home/alan/Descargas/bandaElastica2.webp";
         this.file1 = new File(pathImagen1);
         this.file2 = new File(pathImagen2);
 
@@ -487,8 +488,8 @@ public class ArgMercadoTest extends StepDefinitions {
         Producto newProducto = new Producto();
         ImagenProducto imagen1 = new ImagenProducto();
         ImagenProducto imagen2 = new ImagenProducto();
-        this.pathImagen1 = "/home/alan/Descargas/D_NQ_NP_695211-MLA41894341111_052020-O.webp";
-        this.pathImagen2 = "/home/alan/Descargas/D_NQ_NP_838155-MLA41894341285_052020-O.webp";
+        this.pathImagen1 = "/home/alan/Descargas/smartv.webp";
+        this.pathImagen2 = "/home/alan/Descargas/smartv2.webp";
         this.file1 = new File(pathImagen1);
         this.file2 = new File(pathImagen2);
 
