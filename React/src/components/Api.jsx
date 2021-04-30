@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//axios.defaults.baseURL = "http://localhost:8080/api";
-axios.defaults.baseURL = "https://arg-mercado-backend-api-rest.herokuapp.com/api"
+axios.defaults.baseURL = "http://localhost:8082/api";
+//axios.defaults.baseURL = "https://arg-mercado-backend-api-rest.herokuapp.com/api"
 axios.defaults.timeout = 30000; // 20s
 axios.defaults.headers.post['Content-Type','Accept','type'] = ['multipart/form-data','application/json','formData'];
 
@@ -31,7 +31,7 @@ const crearImagen = ({nombre,tipo,foto,idOwner}) => {
   });
 }
 
-
+/*
 const crearImagenes = ({imagenes}) => {
   return axios.post('/publicarProducto', {
     imagenes: imagenes,
@@ -42,7 +42,7 @@ const crearImagenes = ({imagenes}) => {
   .catch(error => {
     return Promise.reject(error);
   });
-}
+}*/
 
 const getProducto = (idProducto) => {
   return axios.get(`/producto/${idProducto}`)
@@ -139,4 +139,4 @@ const getCategorias = () => {
   })
 }
 
-export {crearProducto,getProductos,crearImagenes,crearFiles,crearImagen,getProductosOrdenadosDeMenorAMayor,getProductosOrdenadosDeMayorAMenor,vender,registarUsuario,iniciarSeccion,getCategorias}
+export {crearProducto,getProductos,crearFiles,crearImagen,getProductosOrdenadosDeMenorAMayor,getProductosOrdenadosDeMayorAMenor,vender,registarUsuario,iniciarSeccion,getCategorias}

@@ -1,38 +1,45 @@
-import React, { useState ,useEffect } from 'react';
-import {useHistory} from 'react-router-dom'
-import RenderProducto from '../components/RenderProducto.jsx'
-import {getProductos} from '../components/Api.jsx';
-
+import React, { useState, useEffect } from 'react';
+import RenderProducto from '../components/RenderProducto.jsx';
+import { getProductos } from '../components/Api.jsx';
+import NavigationBar from './NavigationBar.jsx';
 
 function Home(props) {
 
-     let history = useHistory();
-     const[productosRender, setProductosRender] = useState([]);
-     let productosFiltrados = history.location.state;
-     let estanFitrados = productosFiltrados.length > 0 && productosFiltrados.length < productosRender.length
+  const [productosRender, setProductosRender] = useState([]);
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const [estanFiltrados, setEstanFiltrados] = useState(false);
+ 
 
-     useEffect(() => {
-          const fecthData = async () => {
-          const response = await getProductos()
-                               .then(response => {
-                                  return Promise.resolve(response);
-                                })
-                               .catch(error => {
-                                  return Promise.reject(error);
-                                })
+  useEffect(() => {
+    const fecthData = async () => {
+      const response = await getProductos()
+        .then(response => {
+          return Promise.resolve(response);
+        })
+        .catch(error => {
+          return Promise.reject(error);
+        })
 
-           setProductosRender(response.data)
-          }
-          fecthData();
-     },[])
+      setProductosRender(response.data)
+    }
+    fecthData();
 
-     console.log(props)
+    setEstanFiltrados(productosFiltrados.length > 0);
+ 
 
-     return (
-                <div className="colorGray">
-                      <RenderProducto productos={productosRender} productosFiltrados={productosFiltrados} estanFitrados={estanFitrados} />
-                </div>
-     )
+  }, [productosFiltrados,estanFiltrados]);
+
+  console.log(productosRender);
+  console.log(productosFiltrados);
+  console.log(estanFiltrados);
+
+
+  return (
+    <div className="colorGray">
+      <NavigationBar updateProductos={setProductosFiltrados }/>
+      <RenderProducto productos={productosRender} productosFiltrados={productosFiltrados} estanFiltrados={estanFiltrados} updateProductos={ setProductosFiltrados }/>
+    </div>
+  )
 }
 
 export default Home;
