@@ -18,7 +18,7 @@ public class Producto implements Comparable<Producto> {
     private int idProducto;
 
     @OneToOne(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
-    @PrimaryKeyJoinColumn
+    //@PrimaryKeyJoinColumn
     private Categoria categoria;
 
     @OneToMany(mappedBy="owner", cascade=CascadeType.ALL, fetch = FetchType.EAGER)
