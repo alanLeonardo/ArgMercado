@@ -1,67 +1,87 @@
-import React, { useState ,useEffect } from 'react';
-import {getProductosOrdenadosDeMenorAMayor,getProductosOrdenadosDeMayorAMenor} from '../components/Api.jsx';
-import {Navbar, Nav,NavDropdown} from 'react-bootstrap';
-import style from '../components/style.css'
+import React, { useState, useEffect } from 'react';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import '../components/style.css'
 
 function NavBarOrden(props) {
 
-  const [productosOrdenadosDeMenorAMayor, setProductosOrdenadosDeMenorAMayor] = useState([]);
-  const [productosOrdenadosDeMayorAMenor, setProductosOrdenadosDeMayorAMenor] = useState([]);
+   const [productos, setProductos] = useState([]);
+   const [orderState, setOrderState] = useState("");
 
-  useEffect(() => {
-        const fecthDataOrdenadaDeMenorAMayor = async () => {
-        const response = await getProductosOrdenadosDeMenorAMayor()
-                            .then(response => {
-                               return Promise.resolve(response);
-                            })
-                            .catch(error => {
-                               return Promise.reject(error);
-                            })
-                     setProductosOrdenadosDeMenorAMayor(response.data)
-                    }
-          fecthDataOrdenadaDeMenorAMayor();
+   useEffect(() => {
+      setProductos(props.productos);
 
-          const fecthDataOrdenadaDeMayorAMenor = async () => {
-                    const response = await getProductosOrdenadosDeMayorAMenor()
-                                        .then(response => {
-                                           return Promise.resolve(response);
-                                        })
-                                        .catch(error => {
-                                           return Promise.reject(error);
-                                        })
-                                 setProductosOrdenadosDeMayorAMenor(response.data)
-                    }
-          fecthDataOrdenadaDeMayorAMenor();
-  },[])
+      if(orderState === "MasRelevante") {
+         setProductos(sortMasRelevante());
+         props.updateProductos(productos);
+         setOrderState("");
+      }
 
-     function handleChangeMasRelevante(e) {
-       e.preventDefault();
-       props.updateProductos(productosOrdenadosDeMayorAMenor)
+      if(orderState === "MenosRelevante") {
+         setProductos(sortMenosRelevante());
+         props.updateProductos(productos);
+         setOrderState("");
+      }  
+   }, [orderState,props.updateProductos,productos]);
 
-     }
-     function handleChangeMenosRelevante(e) {
-        e.preventDefault();
-        props.updateProductos(productosOrdenadosDeMenorAMayor)
+   function handleChangeMasRelevante(e) {
+      e.preventDefault();
+      setOrderState("MasRelevante");
+   }
+
+   function handleChangeMenosRelevante(e) {
+      e.preventDefault();
+      setOrderState("MenosRelevante");
+   }
+
+   function sortMasRelevante() {
+      
+      productos.sort(function (a, b) {
+         if (a.precio < b.precio) {
+            return 1;
+         }
+         if (a.precio > b.precio) {
+            return -1;
+         }
+         return 0;
+      });
+      return productos;
+   }
 
 
-     }
+   function sortMenosRelevante() {
 
-return(
-   <div className="navBarOrder" >
-    <h6 className="paddingCero"> Ordenar publicaciones</h6>
-     <Navbar className="paddingCero" collapseOnSelect expand="lg" variant="dark">
-       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-       <Navbar.Collapse id="responsive-navbar-nav">
-         <Nav className="mr-auto">
-           <NavDropdown title="Mas relevates" id="collasible-nav-dropdown">
-             <NavDropdown.Item onClick={(e) => handleChangeMenosRelevante(e)}> Menor precio </NavDropdown.Item>
-             <NavDropdown.Item onClick={(e) => handleChangeMasRelevante(e)}> Mayor precio </NavDropdown.Item>
-           </NavDropdown>
-         </Nav>
-       </Navbar.Collapse>
-     </Navbar>
-   </div>
-      )
+      productos.sort(function (a, b) {
+         if (a.precio > b.precio) {
+            return 1;
+         }
+         if (a.precio < b.precio) {
+            return -1;
+         }
+
+         return 0;
+      });
+      return productos;
+   }
+
+   console.log(productos);
+   console.log(orderState);
+
+   return (
+      <div className="navOrder" >
+         <Navbar className="paddingCero" collapseOnSelect expand="lg" variant="dark">
+            <Navbar.Brand > Ordenar por </Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse id="responsive-navbar-nav">
+               <Nav className="mr-auto">
+                  <NavDropdown title="Mas relevates" id="collasible-nav-dropdown">
+                     <NavDropdown.Item onClick={(e) => handleChangeMenosRelevante(e)}>  Menor precio </NavDropdown.Item>
+                     <NavDropdown.Item onClick={(e) => handleChangeMasRelevante(e)}> Mayor precio </NavDropdown.Item>
+                  </NavDropdown>
+               </Nav>
+            </Navbar.Collapse>
+         </Navbar>
+      </div>
+   )
 }
 
 export default NavBarOrden;

@@ -18,69 +18,69 @@ function VenderProducto() {
   });
   const [categorias, setCategorias] = useState([]);
   const [errors, setErrors] = useState({
-      categoriaError: "",
-      tituloError: "",
-      descripcionError: "",
-      imagenesError: "",
-      precioError: "",
-      stockError: ""
+    categoriaError: "",
+    tituloError: "",
+    descripcionError: "",
+    imagenesError: "",
+    precioError: "",
+    stockError: ""
   });
   const [isLoad, setLoad] = useState(false)
 
   function validarCategoria() {
 
-      if (!data.categoria) {
-        return "Debe seleccionar una Categoria."
-      }
+    if (!data.categoria) {
+      return "Debe seleccionar una Categoria."
+    }
   }
 
   function validarTitulo() {
 
-      if (!data.titulo) {
-        return "Titulo no puede ser un campo en blanco."
-      }
+    if (!data.titulo) {
+      return "Titulo no puede ser un campo en blanco."
+    }
   }
 
   function validarDescripcion() {
 
-      if (!data.descripcion) {
-        return "Descripcion no puede ser un campo en blanco."
-      }
+    if (!data.descripcion) {
+      return "Descripcion no puede ser un campo en blanco."
+    }
 
   }
 
   function validarImagenes() {
 
-     if (formImagen.entries().next().value === undefined) {
-        return "Debe seleccionar una o mas imagenes."
-     }
+    if (formImagen.entries().next().value === undefined) {
+      return "Debe seleccionar una o mas imagenes."
+    }
   }
 
   function validarPrecio() {
-     if (data.precio > 0.0) {
-          return "El precio tiene que se un valor superior a 0."
-     }
+    if (data.precio > 0.0) {
+      return "El precio tiene que se un valor superior a 0."
+    }
   }
 
   function validarStock() {
-     if (data.stock > 0) {
-        return "El stock tiene que se un valor superior a 0."
-     }
+    if (data.stock > 0) {
+      return "El stock tiene que se un valor superior a 0."
+    }
   }
 
   function validacionDeCampos() {
 
-      setErrors({
-         categoriaError: validarCategoria(),
-         tituloError: validarTitulo(),
-         descripcionError: validarDescripcion(),
-         imagenesError: validarImagenes(),
-         precioError: validarPrecio(),
-         stockError: validarStock()
-      });
-      console.log(!(errors.categoriaError || errors.tituloError || errors.descripcionError || errors.imagenesError))
+    setErrors({
+      categoriaError: validarCategoria(),
+      tituloError: validarTitulo(),
+      descripcionError: validarDescripcion(),
+      imagenesError: validarImagenes(),
+      precioError: validarPrecio(),
+      stockError: validarStock()
+    });
+    console.log(!(errors.categoriaError || errors.tituloError || errors.descripcionError || errors.imagenesError))
 
-      return !(errors.categoriaError || errors.tituloError || errors.descripcionError || errors.imagenesError);
+    return !(errors.categoriaError || errors.tituloError || errors.descripcionError || errors.imagenesError);
   }
 
   function swalForError(error) {
@@ -92,35 +92,34 @@ function VenderProducto() {
     setLoad(validacionDeCampos());
     console.log(isLoad);
 
-   if(isLoad) {
-    const files = formImagen;
-    console.log(files.get("files"));
-    crearFiles(files)
-      .then(response => { console.log(response); })
-      .catch(error => {
-        return Promise.reject(error);
-      });
+    if (isLoad) {
+      const files = formImagen;
+      console.log(files.get("files"));
+      crearFiles(files)
+        .then(response => { console.log(response); })
+        .catch(error => {
+          return Promise.reject(error);
+        });
 
 
-    crearProducto({
-      categoria: data.categoria,
-      titulo: data.titulo,
-      descripcion: data.descripcion,
-      precio: data.precio,
-      stock: data.stock
-    })
-      .then((response) => {
-        console.log(response)
-
+      crearProducto({
+        categoria: { name: data.categoria },
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        precio: data.precio,
+        stock: data.stock
       })
-      .catch(error => {
-        swalForError(error)
-      });
+        .then((response) => {
+          console.log(response)
+        })
+        .catch(error => {
+          swalForError(error)
+        });
 
-    console.log(data);
+      console.log(data);
 
-    history.push("/home");
-   }
+      history.push("/home");
+    }
   }
 
   function handleChange(e) {
@@ -158,15 +157,19 @@ function VenderProducto() {
 
 
   function getNameCategorias() {
-    return categorias.flatMap((c) => c.name);
+    let localCategoria = new Set([]);
+    categorias.forEach(c => localCategoria.add(c.name));
+    return Array.from(localCategoria);
   }
 
   function options() {
-    return getNameCategorias().map((c,index) => {
-                  return <option>{c}</option>
-                  })
+    return getNameCategorias().map((c, index) => {
+      return <option>{c}</option>
+    })
   }
 
+  console.log("producto:", data);
+  console.log(formImagen.get("files"));
 
   return (
     <div className="containerVenderProducto">
@@ -174,7 +177,7 @@ function VenderProducto() {
         <Form.Label className="tituloPublicar"> Publicar producto </Form.Label>
         <Form.Group className="label" as={Col} controlId="formBasicCategoria">
           <Form.Label>Categoria</Form.Label>
-          <Form.Control type="categoria"  name="categoria" as="select" value={data.categoria} onChange={(e) => handleChange(e)} >
+          <Form.Control type="categoria" name="categoria" as="select" value={data.categoria} onChange={(e) => handleChange(e)} >
             <option>Seleccione una Categoria</option>
             {options()}
           </Form.Control>
@@ -198,12 +201,12 @@ function VenderProducto() {
         <Form.Group className="number" controlId="formBasicPrecio">
           <Form.Label> Precio  </Form.Label>
           <Form.Control type="number" placeholder="Precio" value={data.precio} name="precio" onChange={(e) => handleChange(e)} />
-          <Form.Label className="text-danger"> {} </Form.Label>
+          <Form.Label className="text-danger"> { } </Form.Label>
         </Form.Group>
         <Form.Group className="number" controlId="formBasicStock">
           <Form.Label> Stock  </Form.Label>
           <Form.Control type="number" placeholder="Stock" value={data.stock} name="stock" onChange={(e) => handleChange(e)} />
-          <Form.Label className="text-danger">{} </Form.Label>
+          <Form.Label className="text-danger">{ } </Form.Label>
           <Button className="botonPublicar" variant="btn btn-dark" type="submit" >
             Publicar producto
    			 </Button>
